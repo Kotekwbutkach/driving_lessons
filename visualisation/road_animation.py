@@ -73,9 +73,8 @@ class RoadAnimation:
                 if event.type == pygame.QUIT:
                     running = False
             if not running:
-                break
+                pygame.quit()
             self.screen.fill((255, 255, 255))
             self.draw_frame(t)
             pygame.display.flip()
             clock.tick(fps)
-        pygame.quit()
