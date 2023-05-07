@@ -44,3 +44,4 @@ class Vehicle:
     def reset(self, transform):
         self.transform = transform
         self.rounds = 0
+        self.has_crashed = False
