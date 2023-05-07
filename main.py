@@ -1,6 +1,7 @@
 from road import Road
 from traffic_controller import TrafficController
 from vehicle import Vehicle
+from visualisation import RoadAnimation
 
 road_length = 100
 time_horizon = 100
@@ -22,6 +23,11 @@ vehicles = [Vehicle(max_acceleration,
             for x in range(number_of_vehicles)]
 
 traffic_controller = TrafficController(road, vehicles, [initial_distance * x for x in range(number_of_vehicles)])
+
+traffic_controller.run()
+anim = RoadAnimation(road)
+anim.show()
+traffic_controller.reset()
 
 for i in range(10):
     traffic_controller.run()

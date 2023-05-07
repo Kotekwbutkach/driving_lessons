@@ -8,6 +8,7 @@ class Road:
     length: float
     time_step: int = -1
     update_time: float
+    crashed_at: int = -1
 
     def __init__(self, length, number_of_vehicles, time_horizon, update_time):
         self.length = length
