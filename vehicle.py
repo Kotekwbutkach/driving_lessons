@@ -17,12 +17,13 @@ class Vehicle:
     def __init__(self,
                  max_acceleration: float,
                  min_acceleration: float,
-                 awareness: int):
+                 awareness: int,
+                 critical_distance: float):
         self.transform = np.zeros(3).astype(float)
         self.max_acceleration = max_acceleration
         self.min_acceleration = min_acceleration
         self.awareness = awareness
-        self.controller_network = NeuralNetwork(awareness * 2)
+        self.controller_network = NeuralNetwork(awareness * 2, critical_distance)
 
     def update(self, delta_time, input_vector, road_length):
         predict = self.controller_network.predict(input_vector)

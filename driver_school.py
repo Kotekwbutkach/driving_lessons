@@ -24,9 +24,10 @@ class DriverSchool:
             input_vector = self.road.get_input_data(i, v.awareness)
             if v.has_crashed:
                 bad_examples.append(v)
-            elif input_vector[0] < 0.5*self.initial_distance or input_vector[0] > 1.2*self.initial_distance: #0.8 i 1.5
+            elif input_vector[0] > 1.2*self.initial_distance: #0.8 i 1.5
                 bad_examples.append(v)
-            else: good_examples.append(v)
+            else:
+                good_examples.append(v)
         print(f"good: {len(good_examples)}, bad: {len(bad_examples)}")
         for w in self.vehicles:
             if w in bad_examples:
