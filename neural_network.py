@@ -17,3 +17,4 @@ class NeuralNetwork:
         layer_2 = self._sigmoid(layer_1)
         prediction = layer_2
         return prediction
+
