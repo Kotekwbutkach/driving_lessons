@@ -23,7 +23,7 @@ class Vehicle:
         self.max_acceleration = max_acceleration
         self.min_acceleration = min_acceleration
         self.awareness = awareness
-        self.controller_network = NeuralNetwork(awareness * 2, critical_distance)
+        self.controller_network = NeuralNetwork(awareness * 4, critical_distance, min_acceleration)
 
     def update(self, delta_time, input_vector, road_length):
         predict = self.controller_network.predict(input_vector)

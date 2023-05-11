@@ -8,9 +8,9 @@ road_length = 100
 time_horizon = 1000
 delta_time = 0.1
 
-number_of_vehicles = 20
+number_of_vehicles = 10
 awareness = 1
-initial_distance = 5
+initial_distance = 10
 max_acceleration = 1
 min_acceleration = -0.2
 critical_distance = 2
@@ -28,10 +28,9 @@ traffic_controller = TrafficController(road, vehicles, [initial_distance * x for
 driver_school = DriverSchool(road, vehicles, 0.1, initial_distance)
 
 road_animation = RoadAnimation(road)
-
 for i in range(100):
     traffic_controller.run()
     driver_school.teach()
-    if not i % 50:
-        road_animation.show()
+    # if not i % 150:
+    #     road_animation.show()
     traffic_controller.reset()
