@@ -25,6 +25,6 @@ class NeuralNetwork:
         r = 0  # np.random.normal(0, 10)
         layer_3 = np.dot(layer_2, self.weights2) + self.bias2 + r
         layer_4 = self._sigmoid(layer_3)
-        prediction = layer_4[0]
+        prediction = layer_4
         return prediction
 
