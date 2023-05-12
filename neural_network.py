@@ -19,12 +19,12 @@ class NeuralNetwork:
     def predict(self, input_vector):
         if input_vector[0] < self.critical_distance:
             return self.min_acceleration
-        r = 0#np.random.normal(0, 10)
+        r = 0  # np.random.normal(0, 10)
         layer_1 = np.dot(input_vector, self.weights) + self.bias + r
         layer_2 = self._sigmoid(layer_1)
-        r = 0 #np.random.normal(0, 10)
+        r = 0  # np.random.normal(0, 10)
         layer_3 = np.dot(layer_2, self.weights2) + self.bias2 + r
         layer_4 = self._sigmoid(layer_3)
-        prediction = layer_4
+        prediction = layer_4[0]
         return prediction
 
