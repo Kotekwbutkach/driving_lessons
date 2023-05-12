@@ -21,18 +21,12 @@ class Road:
         self.time_step = -1
         self.road_data = np.zeros([self.time_horizon, self.number_of_vehicles, 3]).astype(float)
 
-    def get_input_data(self, vehicle_id, awareness):
-        vehicle_indices0 = list(range(vehicle_id + 1, self.number_of_vehicles)) + list(range(vehicle_id))
-        vehicle_indices = vehicle_indices0[:awareness]
-        k = 2
-        data = self.road_data[self.time_step-k, vehicle_indices][:, [0, 1]] -\
-            np.full((awareness, 2), (self.road_data[self.time_step-k, vehicle_id][[0, 1]]))
-        vehicle_indices2 = vehicle_indices0[-awareness:]
-        data2 = self.road_data[self.time_step-k, vehicle_indices2][:, [0, 1]] -\
-            np.full((awareness, 2), (self.road_data[self.time_step-k, vehicle_id][[0, 1]]))
+    def get_input_data(self, vehicle_id, awareness, reaction_steps):
+        all_vehicle_indices = list(range(vehicle_id + 1, self.number_of_vehicles)) + list(range(vehicle_id))
+        vehicle_indices = all_vehicle_indices[:awareness] + all_vehicle_indices[-awareness:]
+        data = self.road_data[self.time_step-reaction_steps, vehicle_indices][:, [0, 1]] -\
+            np.full((awareness, 2), (self.road_data[self.time_step-reaction_steps, vehicle_id][[0, 1]]))
         data[:, 0] += np.array([self.length if data[x, 0] < 0 else 0 for x in range(awareness)])
-        data2[:,0] += np.array([self.length if data2[x, 0] < 0 else 0 for x in range(awareness)])
-        data = np.concatenate((data, data2), axis=1)
         vector = data.flatten()
         return vector
 

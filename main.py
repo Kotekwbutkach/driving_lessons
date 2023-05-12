@@ -14,6 +14,7 @@ initial_distance = 10
 max_acceleration = 1
 min_acceleration = -0.2
 critical_distance = 2
+reaction_steps = 2
 
 learning_rate = 0.1
 
@@ -21,7 +22,8 @@ road = Road(road_length, number_of_vehicles, time_horizon, delta_time)
 vehicles = [Vehicle(max_acceleration,
                     min_acceleration,
                     awareness,
-                    critical_distance)
+                    critical_distance,
+                    reaction_steps)
             for x in range(number_of_vehicles)]
 
 traffic_controller = TrafficController(road, vehicles, [initial_distance * x for x in range(number_of_vehicles)])

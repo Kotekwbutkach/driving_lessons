@@ -41,7 +41,7 @@ class TrafficController:
 
     def update(self):
         for i, vehicle in enumerate(self.vehicles):
-            input_vector = self.road.get_input_data(i, vehicle.awareness)
+            input_vector = self.road.get_input_data(i, vehicle.awareness, vehicle.reaction_steps)
             self.vehicles[i].update(self.update_time, input_vector, self.road.length)
         self.road.add_vehicle_data(self.get_vehicles_data())
         return not self.supervisor.check_for_crashes()
