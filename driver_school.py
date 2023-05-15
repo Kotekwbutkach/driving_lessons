@@ -18,41 +18,38 @@ class DriverSchool:
         self.learning_rate = learning_rate
         self.initial_distance = initial_distance
 
-    def teach(self):
-        good_examples = []
-        bad_examples = []
+    def get_scores(self, crash_penalty=10):
+        scores = dict()
         for i, v in enumerate(self.vehicles):
-            input_vector = self.road.get_input_data(i, v.awareness, v.reaction_steps)
+            scores[v] = np.mean(self.road.road_data[:, i][:, 1])
             if v.has_crashed:
-                bad_examples.append(v)
-            elif input_vector[0] > 1.2 * self.initial_distance:  # 0.8 i 1.5
-                bad_examples.append(v)
-            elif self.road.road_data[self.road.time_step, i][1] < 0:
-                bad_examples.append(v)
-            else:
-                good_examples.append(v)
-        print(f"good: {len(good_examples)}, bad: {len(bad_examples)}")
+                scores[v] -= crash_penalty
+        return scores
 
-        good_bias = 0
-        good_bias2 = 0
-        good_weight = np.zeros((4, 2))
-        good_weight2 = np.zeros(2)
+    def teach(self):
+        self.evolve()
+        self.learn()
 
-        for g in good_examples:
-            good_bias += g.controller_network.bias
-            good_bias2 += g.controller_network.bias2
-            good_weight = np.add(good_weight, g.controller_network.weights)
-            good_weight2 = np.add(good_weight2, g.controller_network.weights2)
-        good_bias = good_bias / len(good_examples)
-        good_weight = np.divide(good_weight, len(good_examples))
-        for w in self.vehicles:
-            if w in bad_examples:
-                w.controller_network.bias = w.controller_network.bias * (1-self.learning_rate)
-                w.controller_network.bias += good_bias * self.learning_rate
-                w.controller_network.bias2 = w.controller_network.bias2 * (1-self.learning_rate)
-                w.controller_network.bias2 += good_bias2 * self.learning_rate
+    def evolve(self):
+        score = self.road.time_step
+        for v in self.vehicles:
+            v.controller_network.assess_shift(score)
 
-                w.controller_network.weights = np.add(w.controller_network.weights * (1-self.learning_rate),
-                                                      good_weight * self.learning_rate)
-                w.controller_network.weights2 = np.add(w.controller_network.weights2 * (1-self.learning_rate),
-                                                       good_weight2 * self.learning_rate)
+    def learn(self):
+        scores = self.get_scores()
+        for i, v in enumerate(self.vehicles):
+            score_difference_sum = 0
+            for w in self.vehicles:
+                if scores[v] < scores[w]:
+                    score_difference_sum += scores[w] - scores[v]
+            if score_difference_sum == 0:
+                continue
+            weights_change = np.zeros(v.controller_network.weights.shape)
+            bias_change = 0
+            for w in self.vehicles:
+                if scores[v] < scores[w]:
+                    coefficient = (scores[w] - scores[v]) / score_difference_sum * self.learning_rate
+                    weights_change += coefficient * np.subtract(w.controller_network.weights, v.controller_network.weights)
+                    bias_change += coefficient * (w.controller_network.bias - v.controller_network.bias)
+            v.controller_network.weights = np.add(v.controller_network.weights, weights_change)
+            v.controller_network.bias += bias_change

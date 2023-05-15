@@ -50,10 +50,13 @@ class TrafficController:
         for t in range(self.time_steps_horizon - 1):
             if not self.update():
                 self.road.crashed_at = t
-                print(f"CRASH on t = {t * self.update_time} s")
-                for i, v in enumerate(self.vehicles):
-                    if v.has_crashed:
-                        print(f"  Vehicle {i}")
                 break
-        else:
+
+    def print_status(self):
+        if self.road.crashed_at == -1:
             print(f"Success (t = {self.time_steps_horizon * self.update_time} s)")
+            return
+        print(f"CRASH on t = {self.road.crashed_at * self.update_time} s")
+        for i, v in enumerate(self.vehicles):
+            if v.has_crashed:
+                print(f"  Vehicle {i}")

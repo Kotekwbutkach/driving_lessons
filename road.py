@@ -19,6 +19,7 @@ class Road:
 
     def reset(self):
         self.time_step = -1
+        self.crashed_at = -1
         self.road_data = np.zeros([self.time_horizon, self.number_of_vehicles, 3]).astype(float)
 
     def get_input_data(self, vehicle_id, awareness, reaction_steps):

@@ -20,12 +20,13 @@ class Vehicle:
                  min_acceleration: float,
                  awareness: int,
                  critical_distance: float,
-                 reaction_steps):
+                 reaction_steps: int,
+                 mutation_rate: float):
         self.transform = np.zeros(3).astype(float)
         self.max_acceleration = max_acceleration
         self.min_acceleration = min_acceleration
         self.awareness = awareness
-        self.controller_network = NeuralNetwork(awareness * 4, critical_distance, min_acceleration)
+        self.controller_network = NeuralNetwork(awareness * 4, critical_distance, mutation_rate)
         self.reaction_steps = reaction_steps
 
     def update(self, delta_time, input_vector, road_length):

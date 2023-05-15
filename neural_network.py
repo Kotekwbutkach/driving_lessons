@@ -2,13 +2,15 @@ import numpy as np
 
 
 class NeuralNetwork:
-    def __init__(self, size: int, critical_distance: float, min_acceleration: float):
-        self.weights = np.random.normal(0, 1, (size, size//2))
-        self.weights2 = np.random.normal(0, 1, size//2)
+    def __init__(self, size: int, critical_distance: float, mutation_rate: float):
+        self.weights = np.random.normal(0, 1, size)
+        self.active_weights = np.copy(self.weights)
         self.bias = np.random.randn()
-        self.bias2 = np.random.randn()
+        self.active_bias = self.bias
         self.critical_distance = critical_distance
-        self.min_acceleration = min_acceleration
+        self.mutation_rate = mutation_rate
+        self.recent_score = 0
+        self.try_shift()
 
     def _sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
@@ -18,13 +20,25 @@ class NeuralNetwork:
 
     def predict(self, input_vector):
         if input_vector[0] < self.critical_distance:
-            return self.min_acceleration
-        r = 0  # np.random.normal(0, 10)
-        layer_1 = np.dot(input_vector, self.weights) + self.bias + r
+            return 0
+        layer_1 = np.dot(input_vector, self.active_weights) + self.active_bias
         layer_2 = self._sigmoid(layer_1)
-        r = 0  # np.random.normal(0, 10)
-        layer_3 = np.dot(layer_2, self.weights2) + self.bias2 + r
-        layer_4 = self._sigmoid(layer_3)
-        prediction = layer_4
+        prediction = layer_2
         return prediction
 
+    def try_shift(self):
+        self.active_bias = self.bias + np.random.normal(0, self.mutation_rate)
+        self.active_weights = self.weights + np.random.normal(0, self.mutation_rate, self.weights.shape)
+
+    def confirm_shift(self):
+        self.bias = self.active_bias
+        self.weights = self.active_weights
+
+    def assess_shift(self, score):
+        result = False
+        if self.recent_score <= score:
+            self.confirm_shift()
+            result = True
+            self.recent_score = score
+        self.try_shift()
+        return result

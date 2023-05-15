@@ -15,24 +15,28 @@ max_acceleration = 1
 min_acceleration = -0.2
 critical_distance = 2
 reaction_steps = 2
+mutation_rate = 0.1
 
-learning_rate = 0.1
+learning_rate = 0.5
 
 road = Road(road_length, number_of_vehicles, time_horizon, delta_time)
 vehicles = [Vehicle(max_acceleration,
                     min_acceleration,
                     awareness,
                     critical_distance,
-                    reaction_steps)
+                    reaction_steps,
+                    mutation_rate)
             for x in range(number_of_vehicles)]
 
 traffic_controller = TrafficController(road, vehicles, [initial_distance * x for x in range(number_of_vehicles)])
 driver_school = DriverSchool(road, vehicles, 0.1, initial_distance)
 
 road_animation = RoadAnimation(road)
-for i in range(100):
+for i in range(10000):
     traffic_controller.run()
     driver_school.teach()
-    # if not i % 150:
-    #     road_animation.show()
+    if not i % 100:
+        traffic_controller.print_status()
+    if not i % 1000:
+        road_animation.show()
     traffic_controller.reset()
