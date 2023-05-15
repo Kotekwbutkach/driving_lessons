@@ -18,7 +18,7 @@ class DriverSchool:
         self.learning_rate = learning_rate
         self.initial_distance = initial_distance
 
-    def get_scores(self, crash_penalty=10):
+    def get_scores(self, crash_penalty=100):
         scores = dict()
         for i, v in enumerate(self.vehicles):
             scores[v] = np.mean(self.road.road_data[:, i][:, 1])
@@ -44,12 +44,13 @@ class DriverSchool:
                     score_difference_sum += scores[w] - scores[v]
             if score_difference_sum == 0:
                 continue
-            weights_change = np.zeros(v.controller_network.weights.shape)
+            weights_change = np.zeros(v.controller_network.active_weights.shape)
             bias_change = 0
             for w in self.vehicles:
                 if scores[v] < scores[w]:
                     coefficient = (scores[w] - scores[v]) / score_difference_sum * self.learning_rate
-                    weights_change += coefficient * np.subtract(w.controller_network.weights, v.controller_network.weights)
-                    bias_change += coefficient * (w.controller_network.bias - v.controller_network.bias)
-            v.controller_network.weights = np.add(v.controller_network.weights, weights_change)
-            v.controller_network.bias += bias_change
+                    weights_change += coefficient * np.subtract(w.controller_network.active_weights,
+                                                                v.controller_network.active_weights)
+                    bias_change += coefficient * (w.controller_network.active_bias - v.controller_network.active_bias)
+            v.controller_network.active_weights = np.add(v.controller_network.active_weights, weights_change)
+            v.controller_network.active_bias += bias_change

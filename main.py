@@ -32,11 +32,14 @@ traffic_controller = TrafficController(road, vehicles, [initial_distance * x for
 driver_school = DriverSchool(road, vehicles, 0.1, initial_distance)
 
 road_animation = RoadAnimation(road)
+
+t_max = 0
 for i in range(10000):
-    traffic_controller.run()
-    driver_school.teach()
-    if not i % 100:
+    if i % 100:
+        traffic_controller.run()
+        driver_school.teach()
+    else:
+        traffic_controller.run(False)
         traffic_controller.print_status()
-    if not i % 1000:
         road_animation.show()
     traffic_controller.reset()

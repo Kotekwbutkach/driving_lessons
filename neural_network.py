@@ -18,10 +18,13 @@ class NeuralNetwork:
     def _sigmoid_deriv(self, x):
         return self._sigmoid(x) * (1 - self._sigmoid(x))
 
-    def predict(self, input_vector):
+    def predict(self, input_vector, evolution_train):
         if input_vector[0] < self.critical_distance:
             return 0
-        layer_1 = np.dot(input_vector, self.active_weights) + self.active_bias
+        if evolution_train:
+            layer_1 = np.dot(input_vector, self.active_weights) + self.active_bias
+        else:
+            layer_1 = np.dot(input_vector, self.weights) + self.active_bias
         layer_2 = self._sigmoid(layer_1)
         prediction = layer_2
         return prediction
