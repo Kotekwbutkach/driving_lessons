@@ -27,7 +27,8 @@ class Road:
         vehicle_indices = all_vehicle_indices[:awareness] + all_vehicle_indices[-awareness:]
         data = self.road_data[self.time_step-reaction_steps, vehicle_indices][:, [0, 1]] -\
             np.full((awareness, 2), (self.road_data[self.time_step-reaction_steps, vehicle_id][[0, 1]]))
-        data[:, 0] += np.array([self.length if data[x, 0] < 0 else 0 for x in range(awareness)])
+        data[:awareness, 0] += np.array([self.length if data[x, 0] < 0 else 0 for x in range(awareness)]) #2*awareness?
+        data[awareness:, 0] -= np.array([self.length if data[x+awareness, 0] > 0 else 0 for x in range(awareness)])
         vector = data.flatten()
         return vector
 
