@@ -14,7 +14,7 @@ number_of_vehicles = 10
 awareness = 1
 initial_distance = 10
 max_speed = 50
-min_speed = -56
+min_speed = -10
 max_acceleration = 1
 min_acceleration = -0.2
 long_distance = 1.5*initial_distance
@@ -42,8 +42,8 @@ driver_school = DriverSchool(road, vehicles, 0.1, initial_distance)
 road_animation = RoadAnimation(road)
 
 t_max = 0
-for i in range(101):
-    if i % 20:
+for i in range(11):
+    if i % 8:
         traffic_controller.run()
         driver_school.teach()
     else:
@@ -51,3 +51,8 @@ for i in range(101):
         traffic_controller.print_status()
         road_animation.show()
     traffic_controller.reset()
+
+traffic_controller.run(False)
+traffic_controller.print_status()
+road_animation.show()
+
