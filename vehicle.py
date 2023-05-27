@@ -1,3 +1,5 @@
+from typing import Union
+
 import numpy as np
 from neural_network import NeuralNetwork
 
@@ -26,14 +28,20 @@ class Vehicle:
                  critical_distance: float,
                  long_distance: float,
                  reaction_steps: int,
-                 mutation_rate: float):
+                 mutation_rate: float,
+                 imported_weights: Union[np.array, None] = None):
         self.transform = np.zeros(3).astype(float)
         self.max_acceleration = max_acceleration
         self.min_acceleration = min_acceleration
         self.max_speed = max_speed
         self.min_speed = min_speed
         self.awareness = awareness
-        self.controller_network = NeuralNetwork(awareness * 4, critical_distance, long_distance,  mutation_rate)
+        self.controller_network = NeuralNetwork(
+            awareness * 4,
+            critical_distance,
+            long_distance,
+            mutation_rate,
+            imported_weights)
         self.reaction_steps = reaction_steps
 
     def update(self, delta_time, input_vector, road_length, evolution_train):
@@ -57,3 +65,10 @@ class Vehicle:
         self.transform = transform
         self.rounds = 0
         self.has_crashed = False
+
+    def export_weights(self):
+        return self.controller_network.weights.copy()
+    
+    def import_weights(self, imported_weights: np.array):
+        self.controller_network.weights = imported_weights.copy()
+        self.controller_network.active_weights = imported_weights.copy()

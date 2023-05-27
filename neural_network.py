@@ -1,9 +1,16 @@
+from typing import Union
+
 import numpy as np
 
 
 class NeuralNetwork:
-    def __init__(self, size: int, critical_distance: float, long_distance:float, mutation_rate: float):
-        self.weights = np.random.normal(0, 1, size)
+    def __init__(self,
+                 size: int,
+                 critical_distance: float,
+                 long_distance: float,
+                 mutation_rate: float,
+                 imported_weights: Union[np.array, None] = None):
+        self.weights = imported_weights if imported_weights is not None else np.random.normal(0, 1, size)
         self.active_weights = np.copy(self.weights)
         self.bias = np.random.randn()
         self.active_bias = self.bias
