@@ -15,8 +15,8 @@ delta_time = 0.1
 number_of_vehicles = 10
 awareness = 1
 initial_distance = 10
-max_speed = 50
-min_speed = -10
+max_speed = 10
+min_speed = -2
 max_acceleration = 1
 min_acceleration = -0.2
 long_distance = 1.5*initial_distance
@@ -74,6 +74,6 @@ traffic_controller = TrafficController(road, vehicles, [initial_distance * x for
 
 traffic_controller.run(False)
 traffic_controller.print_status()
-PlotGenerator.plot_vehicle_data(road, "experiment")
+PlotGenerator.plot_vehicle_data(road, "experiment", 2000, 3000)
 road_animation.show()
 

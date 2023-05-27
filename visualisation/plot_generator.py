@@ -9,10 +9,7 @@ from visualisation import from_id
 class PlotGenerator:
     @staticmethod
     def plot_vehicle_data(road: Road, name: str, start: int = 0, end: Union[int, None] = None):
-        print(end)
         end = road.time_step if end is None else min(end, road.time_step)
-
-        print(end)
         value_types = [(0, "position"), (1, "velocity"), (2, "acceleration")]
 
         for value_id, value_name in value_types:
