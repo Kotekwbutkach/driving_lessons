@@ -51,6 +51,10 @@ class TrafficController:
             if not self.update(evolution_train):
                 self.road.crashed_at = t
                 break
+        return [v.export_weights() for v in self.vehicles]
+
+    def is_success(self):
+        return self.road.crashed_at == -1
 
     def print_status(self):
         if self.road.crashed_at == -1:
