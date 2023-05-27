@@ -6,13 +6,13 @@ from driver_school import DriverSchool
 from road import Road
 from traffic_controller import TrafficController
 from vehicle import Vehicle
-from visualisation import RoadAnimation
+from visualisation import RoadAnimation, PlotGenerator
 
-road_length = 1000
+road_length = 100
 time_horizon = 10000
 delta_time = 0.1
 
-number_of_vehicles = 100
+number_of_vehicles = 10
 awareness = 1
 initial_distance = 10
 max_speed = 50
@@ -43,7 +43,6 @@ driver_school = DriverSchool(road, vehicles, 0.1, initial_distance)
 
 road_animation = RoadAnimation(road)
 
-t_max = 0
 best_weights: List[np.array]
 for i in range(1000):
     traffic_controller.run()
@@ -75,5 +74,6 @@ traffic_controller = TrafficController(road, vehicles, [initial_distance * x for
 
 traffic_controller.run(False)
 traffic_controller.print_status()
+PlotGenerator.plot_vehicle_data(road, "experiment")
 road_animation.show()
 

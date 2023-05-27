@@ -47,6 +47,10 @@ class Vehicle:
     def update(self, delta_time, input_vector, road_length, evolution_train):
         predict = self.controller_network.predict(input_vector, evolution_train)
         acceleration = self.min_acceleration + predict * (self.max_acceleration - self.min_acceleration)
+        if self.transform[1] + acceleration * delta_time > self.max_speed:
+            acceleration = (self.max_speed - self.transform[1]) / delta_time
+        elif self.transform[1] + acceleration * delta_time < self.min_speed:
+            acceleration = (self.min_speed - self.transform[1]) / delta_time
         self.transform[2] = acceleration
         self.transform[1] += self.transform[2] * delta_time
         self.transform[1] = min(self.transform[1], self.max_speed)
@@ -68,7 +72,7 @@ class Vehicle:
 
     def export_weights(self):
         return self.controller_network.weights.copy()
-    
+
     def import_weights(self, imported_weights: np.array):
         self.controller_network.weights = imported_weights.copy()
         self.controller_network.active_weights = imported_weights.copy()
