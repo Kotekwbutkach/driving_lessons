@@ -29,7 +29,7 @@ class RoadAnimation:
         self.speed = speed
         self.radius = min(screen_width, screen_height) * 0.4
         self.vehicle_size = vehicle_size
-        self.screen = pygame.display.set_mode([self.screen_width, self.screen_height])
+        self.screen = pygame.display.set_mode([self.screen_width, self.screen_height], flags=pygame.HIDDEN)
 
     def draw_car(self, position, color):
         angle = 2 * position/self.road.length * math.pi
@@ -61,10 +61,10 @@ class RoadAnimation:
             self.draw_car(pos, from_id(i))
 
     def show(self):
-
+        self.screen = pygame.display.set_mode([self.screen_width, self.screen_height], flags=pygame.SHOWN)
+        pygame.init()
         running = True
         clock = pygame.time.Clock()
-        pygame.init()
         limit = self.road.time_horizon if self.road.crashed_at < 0 else self.road.crashed_at
         fps = int(30 * self.speed)
 
@@ -73,8 +73,11 @@ class RoadAnimation:
                 if event.type == pygame.QUIT:
                     running = False
             if not running:
-                pygame.quit()
+                self.screen = pygame.display.set_mode([self.screen_width, self.screen_height], flags=pygame.HIDDEN)
             self.screen.fill((255, 255, 255))
             self.draw_frame(t)
             pygame.display.flip()
             clock.tick(fps)
+
+    def dispose(self):
+        pygame.quit()
