@@ -1,20 +1,29 @@
+from typing import NamedTuple
+
 import numpy as np
+
+
+class RoadParams(NamedTuple):
+    length: float
+    number_of_vehicles: int
+    time_horizon: int
+    update_time: float
 
 
 class Road:
     road_data: np.array
+    length: float
     number_of_vehicles: int
     time_horizon: int
-    length: float
     time_step: int = -1
     update_time: float
     crashed_at: int = -1
 
-    def __init__(self, length, number_of_vehicles, time_horizon, update_time):
-        self.length = length
-        self.number_of_vehicles = number_of_vehicles
-        self.time_horizon = time_horizon
-        self.update_time = update_time
+    def __init__(self, road_params: RoadParams):
+        self.length = road_params.length
+        self.number_of_vehicles = road_params.number_of_vehicles
+        self.time_horizon = road_params.time_horizon
+        self.update_time = road_params.update_time
         self.reset()
 
     def reset(self):
