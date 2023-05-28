@@ -2,78 +2,32 @@ from typing import List
 
 import numpy as np
 
-from driver_school import DriverSchool
-from road import Road
+from road import RoadParams
+from simulation import Simulation
 from traffic_controller import TrafficController
-from vehicle import Vehicle
-from visualisation import RoadAnimation, PlotGenerator
+from vehicle import Vehicle, VehicleParams
+from visualisation import PlotGenerator
 
-road_length = 100
-time_horizon = 10000
-delta_time = 0.1
+road_params = RoadParams(
+    length=100.,
+    number_of_vehicles=10,
+    time_horizon=1000,
+    update_time=0.1)
 
-number_of_vehicles = 10
-awareness = 1
-initial_distance = 10
-max_speed = 10
-min_speed = -2
-max_acceleration = 1
-min_acceleration = -0.2
-long_distance = 1.5*initial_distance
-critical_distance = 0.2*initial_distance
-reaction_steps = 2
-mutation_rate = 0.1
+vehicle_params = VehicleParams(
+    max_acceleration=1,
+    min_acceleration=-0.2,
+    max_velocity=10,
+    min_velocity=-2,
+    awareness=1,
+    reaction_steps=2,
+    mutation_rate=0.1)
 
+initial_distance = 10.
 learning_rate = 0.5
 
-road = Road(road_length, number_of_vehicles, time_horizon, delta_time)
-vehicles = [Vehicle(max_acceleration,
-                    min_acceleration,
-                    max_speed,
-                    min_speed,
-                    awareness,
-                    critical_distance,
-                    long_distance,
-                    reaction_steps,
-                    mutation_rate)
-            for x in range(number_of_vehicles)]
+simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
 
-traffic_controller = TrafficController(road, vehicles, [initial_distance * x for x in range(number_of_vehicles)])
-driver_school = DriverSchool(road, vehicles, 0.1, initial_distance)
+simulation.run_batch(10, should_learn=True, should_shift=True, should_print_status=True, should_plot=False, should_show=False)
 
-road_animation = RoadAnimation(road)
-
-best_weights: List[np.array]
-for i in range(1000):
-    traffic_controller.run()
-    driver_school.teach()
-    traffic_controller.print_status()
-    if traffic_controller.is_success():
-        traffic_controller.reset()
-        best_weights = traffic_controller.run(False)
-        print(f"Training successful after {i} iterations")
-        break
-    traffic_controller.reset()
-
-for w in best_weights:
-    print(w)
-
-vehicles = [Vehicle(max_acceleration,
-                    min_acceleration,
-                    max_speed,
-                    min_speed,
-                    awareness,
-                    critical_distance,
-                    long_distance,
-                    reaction_steps,
-                    mutation_rate,
-                    best_weights[x])
-            for x in range(number_of_vehicles)]
-
-traffic_controller = TrafficController(road, vehicles, [initial_distance * x for x in range(number_of_vehicles)])
-
-traffic_controller.run(False)
-traffic_controller.print_status()
-PlotGenerator.plot_vehicle_data(road, "experiment", 2000, 3000)
-road_animation.show()
-
+simulation.run(should_learn=False, should_shift=False, should_print_status=True, should_plot=True, should_show=True)
