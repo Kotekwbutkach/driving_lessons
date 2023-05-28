@@ -41,8 +41,8 @@ class Vehicle:
             mutation_rate,
             imported_weights)
 
-    def update(self, delta_time, input_vector, road_length, evolution_train):
-        predict = self.controller_network.predict(input_vector, evolution_train)
+    def update(self, delta_time, input_vector, road_length, mutation_shift):
+        predict = self.controller_network.predict(input_vector, mutation_shift)
         acceleration = self.min_acceleration + predict * (self.max_acceleration - self.min_acceleration)
         if self.transform[1] + acceleration * delta_time > self.max_velocity:
             acceleration = (self.max_velocity - self.transform[1]) / delta_time
