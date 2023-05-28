@@ -1,7 +1,5 @@
 from typing import List
 
-import numpy as np
-
 from road import Road
 from vehicle import Vehicle
 
@@ -9,7 +7,6 @@ from vehicle import Vehicle
 class TrafficSupervisor:
     road: Road
     vehicles: List[Vehicle]
-    number_of_vehicles: int
 
     def __init__(self, road: Road, vehicles: List[Vehicle]):
         self.road = road

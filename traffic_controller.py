@@ -46,15 +46,12 @@ class TrafficController:
         self.road.add_vehicle_data(self.get_vehicles_data())
         return not self.supervisor.check_for_crashes()
 
-    def run(self, evolution_train=True):
+    def run(self, mutation_shift):
         for t in range(self.time_steps_horizon - 1):
-            if not self.update(evolution_train):
+            if not self.update(mutation_shift):
                 self.road.crashed_at = t
                 break
-        return [v.export_weights() for v in self.vehicles]
-
-    def is_success(self):
-        return self.road.crashed_at == -1
+        return [v.export_weights() for v in self.vehicles], self.supervisor.check_for_crashes()
 
     def print_status(self):
         if self.road.crashed_at == -1:
