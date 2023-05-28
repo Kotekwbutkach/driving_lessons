@@ -1,4 +1,3 @@
-import random
 import numpy as np
 from typing import List
 
@@ -10,13 +9,11 @@ class DriverSchool:
     road: Road
     vehicles: List[Vehicle]
     learning_rate: float
-    initial_distance: float
 
-    def __init__(self, road, vehicles, learning_rate, initial_distance):
+    def __init__(self, road, vehicles, learning_rate):
         self.road = road
         self.vehicles = vehicles
         self.learning_rate = learning_rate
-        self.initial_distance = initial_distance
 
     def get_scores(self, crash_penalty=20, backward_penalty=100):
         scores = dict()
@@ -32,13 +29,11 @@ class DriverSchool:
         return scores
 
     def teach(self):
-        self.evolve()
-        self.learn()
+        return self.evolve(), self.learn()
 
     def evolve(self):
         score = self.road.time_step
-        for v in self.vehicles:
-            v.controller_network.assess_shift(score)
+        return [v.controller_network.assess_shift(score) for v in self.vehicles]
 
     def learn(self):
         scores = self.get_scores()
