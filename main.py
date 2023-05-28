@@ -26,8 +26,18 @@ vehicle_params = VehicleParams(
 initial_distance = 10.
 learning_rate = 0.5
 
-simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
-
-simulation.run_batch(10, should_learn=True, should_shift=True, should_print_status=True, should_plot=False, should_show=False)
-
-simulation.run(should_learn=False, should_shift=False, should_print_status=True, should_plot=True, should_show=True)
+stats = dict()
+for i in range(100):
+    simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
+    success, tries, results = simulation.run_until_success(1000,
+                                                           should_learn=True,
+                                                           should_shift=True,
+                                                           should_print_status=False,
+                                                           should_plot=False,
+                                                           should_show=False)
+    # print(f"{'Success' if success else 'Failure'} after {tries} tries")
+    if tries in stats.keys():
+        stats[tries] += 1
+    else:
+        stats[tries] = 1
+print(stats)

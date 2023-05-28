@@ -89,3 +89,18 @@ class Simulation:
                          should_print_status[i],
                          should_plot[i],
                          should_show[i]) for i in range(n)]
+
+    def run_until_success(self,
+                          limit: int,
+                          should_learn: bool = True,
+                          should_shift: bool = True,
+                          should_print_status: bool = False,
+                          should_plot: bool = False,
+                          should_show: bool = False):
+        run_results = list()
+        for _ in range(limit):
+            weights, result = self.run(should_learn, should_shift, should_print_status, should_plot, should_show)
+            run_results.append((weights, result))
+            if result:
+                return True, len(run_results), run_results
+        return False, limit, run_results
