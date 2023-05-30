@@ -39,21 +39,25 @@ class TrafficController:
     def get_vehicles_data(self):
         return np.array([v.transform for v in self.vehicles])
 
-    def update(self):
+    def update(self, evolution_train):
         for i, vehicle in enumerate(self.vehicles):
-            input_vector = self.road.get_input_data(i, vehicle.awareness)
-            self.vehicles[i].update(self.update_time, input_vector, self.road.length)
+            input_vector = self.road.get_input_data(i, vehicle.awareness, vehicle.reaction_steps)
+            self.vehicles[i].update(self.update_time, input_vector, self.road.length, evolution_train)
         self.road.add_vehicle_data(self.get_vehicles_data())
         return not self.supervisor.check_for_crashes()
 
-    def run(self):
+    def run(self, mutation_shift):
         for t in range(self.time_steps_horizon - 1):
-            if not self.update():
+            if not self.update(mutation_shift):
                 self.road.crashed_at = t
-                print(f"CRASH on t = {t * self.update_time} s")
-                for i, v in enumerate(self.vehicles):
-                    if v.has_crashed:
-                        print(f"  Vehicle {i}")
                 break
-        else:
+        return not self.supervisor.check_for_crashes(), [v.export_nn_parameters() for v in self.vehicles]
+
+    def print_status(self):
+        if self.road.crashed_at == -1:
             print(f"Success (t = {self.time_steps_horizon * self.update_time} s)")
+            return
+        print(f"CRASH on t = {self.road.crashed_at * self.update_time} s")
+        for i, v in enumerate(self.vehicles):
+            if v.has_crashed:
+                print(f"  Vehicle {i}")
