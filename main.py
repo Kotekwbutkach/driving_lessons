@@ -55,7 +55,7 @@ if success:
     print(success)
     print(weights)
 
-"""
+
 stats = dict()
 
 
@@ -91,4 +91,3 @@ number_of_tries = sorted(stats.keys())
 for n in number_of_tries:
     print(f"{stats[n]} run{'' if stats[n] == 1 else 's'} successful after {n} tries")
 print(f"{number_of_failures()} run{'' if number_of_failures() == 1 else 's'} failed")
-"""
