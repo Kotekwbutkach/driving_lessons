@@ -6,6 +6,9 @@ from vehicle import VehicleParams
 
 FAIL_ID = -1
 
+number_of_runs = 1000
+number_of_tries = 1000
+
 road_params = RoadParams(
     length=100.,
     number_of_vehicles=10,
@@ -24,6 +27,31 @@ vehicle_params = VehicleParams(
 initial_distance = 10.
 learning_rate = 0.5
 
+simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
+success, tries, results = simulation.run_until_success(number_of_tries,
+                                                       should_learn=True,
+                                                       should_shift=True,
+                                                       should_print_status=False,
+                                                       should_plot=False,
+                                                       should_show=False)
+if success:
+    print(f"Learning successful for {road_params.number_of_vehicles} vehicles. Testing for {road_params.number_of_vehicles -1}:")
+    # road_params.number_of_vehicles -= 1
+    # weights = results[-1][1][:-1]
+    weights = results[-1][1]
+    print(len(weights))
+    print(weights)
+    simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
+    simulation.import_weights(weights)
+    success, weights = simulation.run(should_learn=False,
+                                      should_shift=False,
+                                      should_print_status=True,
+                                      should_plot=True,
+                                      should_show=True)
+    print(success)
+    print(weights)
+
+"""
 stats = dict()
 
 
@@ -31,8 +59,7 @@ def number_of_failures():
     return stats[FAIL_ID] if FAIL_ID in stats.keys() else 0
 
 
-number_of_runs = 1000
-number_of_tries = 1000
+
 for i in range(number_of_runs):
     simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
     success, tries, results = simulation.run_until_success(number_of_tries,
@@ -60,3 +87,4 @@ number_of_tries = sorted(stats.keys())
 for n in number_of_tries:
     print(f"{stats[n]} run{'' if stats[n] == 1 else 's'} successful after {n} tries")
 print(f"{number_of_failures()} run{'' if number_of_failures() == 1 else 's'} failed")
+"""

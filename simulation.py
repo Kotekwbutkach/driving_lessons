@@ -1,5 +1,7 @@
 from typing import Union, List
 
+import numpy as np
+
 from driver_school import DriverSchool
 from road import Road, RoadParams
 from traffic_controller import TrafficController
@@ -47,6 +49,10 @@ class Simulation:
         self.road_animation = RoadAnimation(self.road)
         self.plot_generator = plot_generator if plot_generator is not None else PlotGenerator(self.road)
 
+    def import_weights(self, imported_weights: List[Union[np.array, None]]):
+        for vehicle, weights in zip(self.vehicles, imported_weights):
+            vehicle.import_weights(weights)
+
     def run(self,
             should_learn: bool = True,
             should_shift: bool = True,
@@ -54,7 +60,7 @@ class Simulation:
             should_plot: bool = False,
             should_show: bool = False):
         self.traffic_controller.reset()
-        weights, result = self.traffic_controller.run(mutation_shift=should_shift)
+        result, weights = self.traffic_controller.run(mutation_shift=should_shift)
         if should_learn:
             self.driver_school.teach()
         if should_print_status:
@@ -63,7 +69,7 @@ class Simulation:
             self.plot_generator.plot_vehicle_data()
         if should_show:
             self.road_animation.show()
-        return weights, result
+        return result, weights
 
     def run_batch(self, n: int,
                   should_learn: Union[bool, List[bool]],
@@ -99,8 +105,8 @@ class Simulation:
                           should_show: bool = False):
         run_results = list()
         for _ in range(limit):
-            weights, result = self.run(should_learn, should_shift, should_print_status, should_plot, should_show)
-            run_results.append((weights, result))
+            result, weights = self.run(should_learn, should_shift, should_print_status, should_plot, should_show)
+            run_results.append((result, weights))
             if result:
                 return True, len(run_results), run_results
         return False, limit, run_results
