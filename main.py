@@ -36,9 +36,13 @@ success, tries, results = simulation.run_until_success(number_of_tries,
                                                        should_show=False)
 if success:
     print(f"Learning successful for {road_params.number_of_vehicles} vehicles. Testing for {road_params.number_of_vehicles -1}:")
-    # road_params.number_of_vehicles -= 1
-    # weights = results[-1][1][:-1]
-    weights = results[-1][1]
+    road_params = RoadParams(
+        length=100.,
+        number_of_vehicles=6,
+        time_horizon=1000,
+        update_time=0.1)
+    # initial_distance = road_params.length/road_params.number_of_vehicles
+    weights = results[-1][1][:-1]
     print(len(weights))
     print(weights)
     simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)

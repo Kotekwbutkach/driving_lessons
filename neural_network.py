@@ -37,7 +37,7 @@ class NeuralNetwork:
 
     def confirm_shift(self):
         self.bias = self.active_bias
-        self.weights = self.active_weights
+        self.weights = self.active_weights.copy()
 
     def assess_shift(self, score):
         result = False
