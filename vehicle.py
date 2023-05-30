@@ -1,4 +1,4 @@
-from typing import Union, NamedTuple
+from typing import Union, NamedTuple, Tuple
 
 import numpy as np
 from neural_network import NeuralNetwork
@@ -67,9 +67,11 @@ class Vehicle:
         self.rounds = 0
         self.has_crashed = False
 
-    def export_weights(self):
-        return self.controller_network.weights.copy()
+    def export_nn_parameters(self):
+        return self.controller_network.active_weights.copy(), self.controller_network.active_bias
 
-    def import_weights(self, imported_weights: np.array):
-        self.controller_network.weights = imported_weights.copy()
-        self.controller_network.active_weights = imported_weights.copy()
+    def import_nn_parameters(self, imported_parameters: Tuple[np.array, float]):
+        self.controller_network.weights = imported_parameters[0].copy()
+        self.controller_network.active_weights = imported_parameters[0].copy()
+        self.controller_network.bias = imported_parameters[1]
+        self.controller_network.active_bias = imported_parameters[1]

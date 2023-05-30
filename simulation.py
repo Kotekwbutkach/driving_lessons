@@ -51,7 +51,7 @@ class Simulation:
 
     def import_weights(self, imported_weights: List[Union[np.array, None]]):
         for vehicle, weights in zip(self.vehicles, imported_weights):
-            vehicle.import_weights(weights)
+            vehicle.import_nn_parameters(weights)
 
     def run(self,
             should_learn: bool = True,

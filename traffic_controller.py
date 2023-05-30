@@ -51,7 +51,7 @@ class TrafficController:
             if not self.update(mutation_shift):
                 self.road.crashed_at = t
                 break
-        return not self.supervisor.check_for_crashes(), [v.export_weights() for v in self.vehicles]
+        return not self.supervisor.check_for_crashes(), [v.export_nn_parameters() for v in self.vehicles]
 
     def print_status(self):
         if self.road.crashed_at == -1:
