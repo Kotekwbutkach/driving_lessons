@@ -53,7 +53,7 @@ class DriverSchool:
                 j += 1
                 # print(f"score w: {scores[w]}")
                 if scores[v] < scores[w] and scores[w] > 1:
-                    coefficient = (scores[w] - scores[v]) / score_difference_sum * self.learning_rate * 2
+                    coefficient = (scores[w] - scores[v]) / score_difference_sum * self.learning_rate
                     # print(f"dla v: {i} i w: {j} coefficient to {coefficient}")
                     weights_change += coefficient * np.subtract(w.controller_network.active_weights,
                                                                 v.controller_network.active_weights)
