@@ -20,7 +20,7 @@ class RoadAnimation:
                  screen_width: int = 400,
                  screen_height: int = 600,
                  road_width: int = 10,
-                 speed: float = 1.,
+                 speed: float = .8,
                  vehicle_size: float = 2):
         self.road = road
         self.screen_width = screen_width

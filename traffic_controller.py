@@ -30,7 +30,9 @@ class TrafficController:
 
         self.reset()
 
-    def reset(self):
+    def reset(self, shuffle=False):
+        if shuffle:
+            self.vehicles = list(np.random.permutation(self.vehicles))
         for i, v in enumerate(self.vehicles):
             v.reset(np.array([self.initial_positions[i], 0, 0]).astype(float))
         self.road.reset()

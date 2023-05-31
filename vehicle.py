@@ -12,6 +12,7 @@ class VehicleParams(NamedTuple):
     awareness: int
     reaction_steps: int
     mutation_rate: float
+    prediction_error: float
 
 
 class Vehicle:
@@ -34,11 +35,13 @@ class Vehicle:
         self.awareness = vehicle_params.awareness
         self.reaction_steps = vehicle_params.reaction_steps
         mutation_rate = vehicle_params.mutation_rate
+        prediction_error = vehicle_params.prediction_error
 
         self.transform = np.zeros(3).astype(float)
         self.controller_network = NeuralNetwork(
             self.awareness * 4,
             mutation_rate,
+            prediction_error,
             imported_weights)
 
     def update(self, delta_time, input_vector, road_length, mutation_shift):

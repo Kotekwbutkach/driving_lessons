@@ -1,14 +1,21 @@
 import random
+
+import numpy as np
 import sys
 
 from road import RoadParams
 from simulation import Simulation
 from vehicle import VehicleParams
+from visualisation import PlotGenerator
 
 FAIL_ID = -1
+SEED = 4
+
+np.random.seed(SEED)
+random.seed(SEED)
 
 number_of_runs = 1000
-number_of_tries = 1000
+number_of_tries = 100
 
 road_params = RoadParams(
     length=100.,
@@ -17,35 +24,44 @@ road_params = RoadParams(
     update_time=0.1)
 
 vehicle_params = VehicleParams(
-    max_acceleration=1,
+    max_acceleration=0.5,
     min_acceleration=-0.2,
-    max_velocity=10,
+    max_velocity=40,
     min_velocity=-2,
     awareness=1,
-    reaction_steps=2,
-    mutation_rate=0.1)
+    reaction_steps=40,
+    mutation_rate=0.1,
+    prediction_error=0.01)
 
 initial_distance = road_params.length/road_params.number_of_vehicles
 learning_rate = 0.5
 
 simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
-success, tries, results = simulation.run_until_success(number_of_tries,
-                                                       should_learn=True,
-                                                       should_shift=True,
-                                                       should_print_status=False,
-                                                       should_plot=False,
-                                                       should_show=False)
-if success:
+# success, tries, weights = simulation.run_until_success(number_of_tries,
+#                                                should_learn=True,
+#                                                should_shift=True,
+#                                                should_print_status=True,
+#                                                should_plot=False,
+#                                                should_show=False)
+success, weights = simulation.run_batch(number_of_tries,
+                                               should_learn=True,
+                                               should_shift=True,
+                                               should_print_status=True,
+                                               should_plot=False,
+                                               should_show=False)[-1]
+
+if True:
     print(f"Learning successful for {road_params.number_of_vehicles} vehicles.")
     road_params = RoadParams(
         length=100.,
-        number_of_vehicles=15,
+        number_of_vehicles=12,
         time_horizon=1000,
         update_time=0.1)
     print(f"Testing for {road_params.number_of_vehicles}:")
-    initial_distance = road_params.length/road_params.number_of_vehicles
-    weights = results[-1][1][:]
-    # weights = [weights[random.randint(0, 9)] for i in range(road_params.number_of_vehicles)] #korzystamy z kierowców
+    initial_distance = road_params.length/road_params.number_of_vehicles / 1.5
+    # weights = results[-1][1][:]
+    # weights = [weights[np.random.randint(0, 9)] for i in range(road_params.number_of_vehicles)]
+    # korzystamy z kierowców
 
     # losujemy wagi kierowców i tworzymy nowych:
     weights2 = []
@@ -54,13 +70,13 @@ if success:
         while sum(wagi) == 0: #na wypadek gdy * random.randint(0,1) da same 0
             wagi = []
             for j in range(len(weights)):
-                # wagi.append(random.randint(0, 100) * random.randint(0,1)) #ten i sposób niżej działają
-                wagi.append(random.randint(0, 50) * random.randint(0,1) if random.randint(0,1)==0 else random.randint(50, 100) * random.randint(0,1))
+                wagi.append(random.randint(0, 100) * random.randint(0, 1))
+
         suma = sum(wagi)
         wagi = [x / suma for x in wagi]
-        wagi2, bias2 = [0, 0, 0, 0], 0
+        wagi2, bias2 = np.zeros(shape=(4 * vehicle_params.awareness, 1)), 0
         for j in range(len(weights)):
-            for k in range(4):
+            for k in range(4 * vehicle_params.awareness):
                 wagi2[k] += wagi[j] * weights[j][0][k]
             bias2 += wagi[j]*weights[j][1]
         lista = [wagi2, bias2]
@@ -68,12 +84,13 @@ if success:
     weights = weights2
 
     simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
+    simulation.plot_generator = PlotGenerator(simulation.road, "plot_macro", 200, 1000)
     simulation.import_weights(weights)
     success, weights = simulation.run(should_learn=False,
                                       should_shift=False,
                                       should_print_status=True,
-                                      should_plot=False,
-                                      should_show=False)
+                                      should_plot=True,
+                                      should_show=True)
     print(success)
     print(weights)
 
@@ -83,7 +100,6 @@ stats = dict()
 
 def number_of_failures():
     return stats[FAIL_ID] if FAIL_ID in stats.keys() else 0
-
 
 
 for i in range(number_of_runs):

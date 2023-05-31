@@ -54,15 +54,14 @@ class Simulation:
             if imported_weights is not None:
                 vehicle.import_nn_parameters(weights)
 
-
-
     def run(self,
             should_learn: bool = True,
             should_shift: bool = True,
             should_print_status: bool = False,
             should_plot: bool = False,
-            should_show: bool = False):
-        self.traffic_controller.reset()
+            should_show: bool = False,
+            should_shuffle: bool = False):
+        self.traffic_controller.reset(should_shuffle)
         result, weights = self.traffic_controller.run(mutation_shift=should_shift)
         if should_learn:
             self.driver_school.teach()
