@@ -15,15 +15,13 @@ class DriverSchool:
         self.vehicles = vehicles
         self.learning_rate = learning_rate
 
-    def get_scores(self, velocity_penalty=1000, crash_penalty=20, backward_penalty=100):
+    def get_scores(self, crash_penalty=20, backward_penalty=100):
         scores = dict()
         for i, v in enumerate(self.vehicles):
             data_to_score = self.road.road_data[:, i][:, 1]
             data_to_score = data_to_score[data_to_score != 0]
             # print(f" {i} data_to_score: {data_to_score}")
             scores[v] = np.mean(data_to_score)
-            if v.transform[1] > v.max_velocity * 0.5:
-                scores[v] -= velocity_penalty
             if v.has_crashed:
                 scores[v] -= crash_penalty
             if v.transform[1] < 0:
