@@ -22,7 +22,7 @@ class DriverSchool:
             data_to_score = data_to_score[data_to_score != 0]
             # print(f" {i} data_to_score: {data_to_score}")
             scores[v] = np.mean(data_to_score)
-            if v.transform[1] > v.max_velocity * 0.9:
+            if v.transform[1] > v.max_velocity * 0.5:
                 scores[v] -= velocity_penalty
             if v.has_crashed:
                 scores[v] -= crash_penalty

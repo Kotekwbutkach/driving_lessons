@@ -17,7 +17,7 @@ class Simulation:
     traffic_supervisor: TrafficSupervisor
     driver_school: DriverSchool
     road_animation: RoadAnimation
-    plot_generator: PlotGenerator
+    plot_generators: List[PlotGenerator]
     number_of_vehicles: int
 
     def __init__(self,
@@ -25,7 +25,7 @@ class Simulation:
                  vehicle_params: Union[VehicleParams, List[VehicleParams]],
                  initial_distance: Union[float, List[float]],
                  learning_rate: float,
-                 plot_generator: Union[PlotGenerator, None] = None):
+                 plot_generators: Union[List[PlotGenerator], None] = None):
 
         self.number_of_vehicles = road_params.number_of_vehicles
 
@@ -47,7 +47,7 @@ class Simulation:
 
         self.driver_school = DriverSchool(self.road, self.vehicles, learning_rate)
         self.road_animation = RoadAnimation(self.road)
-        self.plot_generator = plot_generator if plot_generator is not None else PlotGenerator(self.road)
+        self.plot_generators = plot_generators if plot_generators is not None else [PlotGenerator(self.road)]
 
     def import_weights(self, imported_weights: List[Union[np.array, None]]):
         for vehicle, weights in zip(self.vehicles, imported_weights):
@@ -68,7 +68,8 @@ class Simulation:
         if should_print_status:
             self.traffic_controller.print_status()
         if should_plot:
-            self.plot_generator.plot_vehicle_data()
+            for plot_generator in self.plot_generators:
+                plot_generator.plot_vehicle_data()
         if should_show:
             self.road_animation.show()
         return result, weights

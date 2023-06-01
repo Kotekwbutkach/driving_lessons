@@ -9,7 +9,7 @@ class NeuralNetwork:
                  mutation_rate: float,
                  prediction_error: float,
                  imported_weights: Union[np.array, None] = None):
-        self.weights = imported_weights if imported_weights is not None else np.random.normal(0, 1, size)
+        self.weights = imported_weights if imported_weights is not None else np.random.normal(0, 5, size)
         self.active_weights = np.copy(self.weights)
         self.bias = np.random.randn() / 100
         self.active_bias = self.bias

@@ -9,7 +9,7 @@ from vehicle import VehicleParams
 from visualisation import PlotGenerator
 
 FAIL_ID = -1
-SEED = 4
+SEED = 7
 
 np.random.seed(SEED)
 random.seed(SEED)
@@ -29,12 +29,12 @@ vehicle_params = VehicleParams(
     max_velocity=40,
     min_velocity=-2,
     awareness=1,
-    reaction_steps=40,
+    reaction_steps=20,
     mutation_rate=0.1,
-    prediction_error=0.01)
+    prediction_error=0.1)
 
 initial_distance = road_params.length/road_params.number_of_vehicles
-learning_rate = 0.5
+learning_rate = 0.2
 
 simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
 # success, tries, weights = simulation.run_until_success(number_of_tries,
@@ -46,7 +46,7 @@ simulation = Simulation(road_params, vehicle_params, initial_distance, learning_
 success, weights = simulation.run_batch(number_of_tries,
                                                should_learn=True,
                                                should_shift=True,
-                                               should_print_status=True,
+                                               should_print_status=False,
                                                should_plot=False,
                                                should_show=False)[-1]
 
@@ -54,11 +54,11 @@ if True:
     print(f"Learning successful for {road_params.number_of_vehicles} vehicles.")
     road_params = RoadParams(
         length=100.,
-        number_of_vehicles=12,
+        number_of_vehicles=15,
         time_horizon=1000,
         update_time=0.1)
     print(f"Testing for {road_params.number_of_vehicles}:")
-    initial_distance = road_params.length/road_params.number_of_vehicles / 1.5
+    initial_distance = road_params.length/road_params.number_of_vehicles / 1.8
     # weights = results[-1][1][:]
     # weights = [weights[np.random.randint(0, 9)] for i in range(road_params.number_of_vehicles)]
     # korzystamy z kierowców
@@ -84,23 +84,45 @@ if True:
     weights = weights2
 
     simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
-    simulation.plot_generator = PlotGenerator(simulation.road, "plot_macro", 200, 1000)
+    simulation.plot_generators.append(PlotGenerator(simulation.road, f"plot_macro_seed_{SEED}", 200, 800))
     simulation.import_weights(weights)
     success, weights = simulation.run(should_learn=False,
                                       should_shift=False,
                                       should_print_status=True,
                                       should_plot=True,
-                                      should_show=True)
-    print(success)
-    print(weights)
+                                      should_show=False)
+    # print(success)
+    # print(weights)
 
-"""
+
 stats = dict()
 
 
 def number_of_failures():
     return stats[FAIL_ID] if FAIL_ID in stats.keys() else 0
 
+
+number_of_runs = 100
+number_of_tries = 1000
+
+road_params = RoadParams(
+    length=100.,
+    number_of_vehicles=10,
+    time_horizon=1000,
+    update_time=0.1)
+
+vehicle_params = VehicleParams(
+    max_acceleration=0.5,
+    min_acceleration=-0.2,
+    max_velocity=40,
+    min_velocity=-2,
+    awareness=1,
+    reaction_steps=20,
+    mutation_rate=0.1,
+    prediction_error=0.1)
+
+initial_distance = road_params.length/road_params.number_of_vehicles
+learning_rate = 0.5
 
 for i in range(number_of_runs):
     simulation = Simulation(road_params, vehicle_params, initial_distance, learning_rate)
@@ -122,11 +144,11 @@ for i in range(number_of_runs):
     else:
         stats[tries] = 1
 
-    sys.stdout.write(f"\rSimulation {i}/{number_of_runs} ({i - number_of_failures()} successful)")
+    sys.stdout.write(f"\rSimulation {i+1}/{number_of_runs} ({i + 1 - number_of_failures()} successful)")
     sys.stdout.flush()
-
+print()
 number_of_tries = sorted(stats.keys())
 for n in number_of_tries:
     print(f"{stats[n]} run{'' if stats[n] == 1 else 's'} successful after {n} tries")
 print(f"{number_of_failures()} run{'' if number_of_failures() == 1 else 's'} failed")
-"""
+
